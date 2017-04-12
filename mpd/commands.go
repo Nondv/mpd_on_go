@@ -36,13 +36,20 @@ func (client *Client) ExecuteAndParseMap(command string) (map[string]string, err
 func parseAsMap(lines []string) map[string]string {
 	result := make(map[string]string)
 	for i := 0; i < len(lines); i++ {
-		var key, val string
-		fmt.Sscanf(lines[i], "%s %s", &key, &val)
-		key = key[:len(key)-1] // colon
-		result[key] = val
+		key, value := parseKeyValue(lines[i])
+		result[key] = value
 	}
 
 	return result
+}
+
+func parseKeyValue(line string) (key, value string) {
+	fmt.Sscan(line, &key)
+	valueStartsAt := len(key) + 1
+
+	key = key[:len(key)-1] // delete colon
+	value = line[valueStartsAt:]
+	return key, value
 }
 
 func (client *Client) Execute(command string) (string, error) {
