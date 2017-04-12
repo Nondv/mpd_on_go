@@ -35,7 +35,7 @@ func (client *Client) ExecuteAndParseMap(command string) (map[string]string, err
 
 func parseAsMap(lines []string) map[string]string {
 	result := make(map[string]string)
-	for i := 0; i < len(lines)-1; i++ {
+	for i := 0; i < len(lines); i++ {
 		var key, val string
 		fmt.Sscanf(lines[i], "%s %s", &key, &val)
 		key = key[:len(key)-1] // colon
