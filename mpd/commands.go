@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -48,6 +49,23 @@ func parseKeyValue(line string) (key, value string) {
 	valueStartsAt := len(key) + 2 // colon + space
 	value = line[valueStartsAt:]
 	return key, value
+}
+
+// Just execute and check if MPD returned error
+func (client *Client) ExecuteAndCheckMpdError(command string) error {
+	response, err := client.Execute(command)
+	if err != nil {
+		return err
+	}
+
+	responseLines := lines(response)
+	executionStatus := responseLines[len(responseLines)-1]
+
+	if isMpdError(executionStatus) {
+		return errors.New(fmt.Sprintf("mpd error: %s", executionStatus))
+	}
+
+	return nil
 }
 
 func (client *Client) Execute(command string) (string, error) {

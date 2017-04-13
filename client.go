@@ -16,12 +16,16 @@ func main() {
 	}
 	fmt.Printf("%+v\n\n", client)
 
-	status, _ := client.Status()
-	printMapAsJson(status)
-	currentSong, _ := client.CurrentSong()
-	printMapAsJson(currentSong)
-	stats, _ := client.Stats()
-	printMapAsJson(stats)
+	executeAndPrint(&client, "play")
+}
+
+func executeAndPrint(c *mpd.Client, command string) {
+	response, err := c.Execute(command)
+	if err != nil {
+		fmt.Printf("%s command error: %v", command, err)
+		return
+	}
+	fmt.Println(response)
 }
 
 // Just print

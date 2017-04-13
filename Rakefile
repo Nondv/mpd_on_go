@@ -3,7 +3,16 @@ require_relative 'mpd/test/server/fake-mpd-server'
 SERVER_PORT = 6789
 
 task :default do
+  Rake::Task[:build].execute
+end
+
+task :build do
   sh 'go build'
+end
+
+task :run do
+  Rake::Task[:build].execute
+  sh './mpd_on_go'
 end
 
 task :test do
