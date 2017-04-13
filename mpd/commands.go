@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"fmt"
 	"strings"
 )
 
@@ -44,10 +43,9 @@ func parseAsMap(lines []string) map[string]string {
 }
 
 func parseKeyValue(line string) (key, value string) {
-	fmt.Sscan(line, &key)
-	valueStartsAt := len(key) + 1
-
-	key = key[:len(key)-1] // delete colon
+	keyEndsAt := strings.Index(line, ":")
+	key = line[:keyEndsAt]
+	valueStartsAt := len(key) + 2 // colon + space
 	value = line[valueStartsAt:]
 	return key, value
 }
