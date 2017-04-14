@@ -8,7 +8,6 @@ import (
 
 /*
  * TODO:
- *   * consume <1/0>
  *   * crossfade <SECONDS>
  *   * mixrampdb <deciBels>
  *   * mixrampdelay <SECONDS>
@@ -16,27 +15,27 @@ import (
  *   * replay_gain_status
  */
 
+func (client *Client) SetConsume(state bool) error {
+	return client.executeStateSetCommand("consume", state)
+}
+
 func (client *Client) SetSingle(state bool) error {
-	if state == true {
-		return client.ExecuteAndCheckMpdError("single 1")
-	} else {
-		return client.ExecuteAndCheckMpdError("single 0")
-	}
+	return client.executeStateSetCommand("single", state)
 }
 
 func (client *Client) SetRepeat(state bool) error {
-	if state == true {
-		return client.ExecuteAndCheckMpdError("repeat 1")
-	} else {
-		return client.ExecuteAndCheckMpdError("repeat 0")
-	}
+	return client.executeStateSetCommand("repeat", state)
 }
 
 func (client *Client) SetRandom(state bool) error {
+	return client.executeStateSetCommand("random", state)
+}
+
+func (client *Client) executeStateSetCommand(command string, state bool) error {
 	if state == true {
-		return client.ExecuteAndCheckMpdError("random 1")
+		return client.ExecuteAndCheckMpdError(command + " 1")
 	} else {
-		return client.ExecuteAndCheckMpdError("random 0")
+		return client.ExecuteAndCheckMpdError(command + " 0")
 	}
 }
 
