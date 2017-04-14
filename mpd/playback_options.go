@@ -10,7 +10,6 @@ import (
  * TODO:
  *   * consume <1/0>
  *   * repeat <1/0>
- *   * random <1/0>
  *   * single <1/0>
  *   * crossfade <SECONDS>
  *   * mixrampdb <deciBels>
@@ -18,6 +17,14 @@ import (
  *   * replay_gain_mode <MODE>
  *   * replay_gain_status
  */
+
+func (client *Client) SetRandom(state bool) error {
+	if state == true {
+		return client.ExecuteAndCheckMpdError("random 1")
+	} else {
+		return client.ExecuteAndCheckMpdError("random 0")
+	}
+}
 
 func (client *Client) SetVolume(n int) error {
 	if n < 0 || n > 100 {
