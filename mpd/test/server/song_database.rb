@@ -23,31 +23,49 @@ class SongDatabase
   end
   SONGS = songs.freeze
 
+  attr_reader :current_song_index
+
   def initialize
     @current_song_index = 0
   end
 
-  def current_song
+  def current
     SONGS[current_song_index]
   end
 
+  def next!
+    @current_song_index = next_song_index
+    current
+  end
+
+  def previous!
+    @current_song_index = previous_song_index
+    current
+  end
+
   def next_song
-    @current_song_index += 1
-    @current_song_index = 0 if @current_song_index == SONGS.size
-    current_song
+    SONGS[next_song_index]
   end
 
   def previous_song
-    @current_song_index -= 1
-    @current_song_index = SONGS.size - 1 if @current_song_index.zero?
-    current_song
+    SONGS[previous_song]
+  end
+
+  def next_song_index
+    res = @current_song_index + 1
+    res == SONGS.size ? 0 : res
+  end
+
+  def previous_song_index
+    res = @current_song_index - 1
+    res.zero? ? SONGS.size - 1 : res
   end
 
   def play_by_id(id)
     SONGS.each_with_index do |s, i|
       next unless s['Id'] == id
       @current_song_index = i
-      return current_song
+      return current
     end
     nil
   end
@@ -55,10 +73,6 @@ class SongDatabase
   def play_by_index(i)
     return unless SONGS[i]
     @current_song_index = i
-    current_song
+    current
   end
-
-  private
-
-  attr_reader :current_song_index
 end
