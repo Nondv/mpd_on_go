@@ -1,5 +1,5 @@
 require 'socket'
-require_relative 'songs'
+require_relative 'song_database'
 
 class FakeMpdServer < TCPServer
   VERSION = 'fake-version'.freeze
@@ -12,7 +12,7 @@ class FakeMpdServer < TCPServer
   class ClientSession
     def initialize(socket)
       @socket = socket
-      @current_song_index = 0
+      @song_db = SongDatabase.new
     end
 
     def start
@@ -32,7 +32,7 @@ class FakeMpdServer < TCPServer
 
     private
 
-    attr_reader :current_song_index, :socket
+    attr_reader :song_db, :socket
 
     def execute_command(command)
       case command.chomp
@@ -47,48 +47,30 @@ class FakeMpdServer < TCPServer
 
     def play_id(full_command)
       argument = full_command.match(/playid (.*)/)[1]
-
-      # it is not obvious but if song is not found
-      # session loop will raise error (as planned)
-      SONGS.each_with_index do |s, i|
-        next unless s['Id'] == argument
-        @current_song_index = i
-        return "OK\n"
-      end
+      song_db.play_by_id(argument) && "OK\n"
     end
 
     def play(full_comand)
       argument = full_comand.match(/play (.*)/)[1]
-      @current_song_index = Integer(argument)
-      "OK\n"
+      song_db.play_by_index(Integer(argument)) && "OK\n"
     rescue ArgumentError # from Integer()
       raise 'wrong argument'
     end
 
     def next_song
-      inc_song_index
+      song_db.next_song
       "OK\n"
     end
 
     def previous_song
-      dec_song_index
+      song_db.previous_song
       "OK\n"
     end
 
     def current_song
-      result = SONGS[current_song_index].map { |k, v| "#{k}: #{v}\n" }.join
+      result = song_db.current_song.map { |k, v| "#{k}: #{v}\n" }.join
       result << "OK\n"
       result
-    end
-
-    def inc_song_index
-      @current_song_index += 1
-      @current_song_index = 0 if @current_song_index == SONGS.size
-    end
-
-    def dec_song_index
-      @current_song_index -= 1
-      @current_song_index = SONGS.size - 1 if @current_song_index == SONGS.size
     end
   end
 end
