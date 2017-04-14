@@ -14,13 +14,13 @@ type Client struct {
 	reader     *bufio.Reader
 }
 
-func Connect(host string, port int) (Client, error) {
+func Connect(host string, port int) (*Client, error) {
 	client := Client{Host: host, Port: port}
 	err := client.Connect()
 	if err != nil {
-		return client, err
+		return nil, err
 	}
-	return client, nil
+	return &client, nil
 }
 
 func (client *Client) Connect() error {
