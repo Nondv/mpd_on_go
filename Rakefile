@@ -7,12 +7,12 @@ task :default do
 end
 
 task :build do
-  sh 'go build'
+  sh 'go build -o gmpc'
 end
 
 task :run do
   Rake::Task[:build].execute
-  sh './mpd_on_go'
+  sh './gmpc'
 end
 
 task :test do
