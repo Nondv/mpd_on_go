@@ -53,6 +53,13 @@ func (s *Client) writeline(data string) (int, error) {
 	return fmt.Fprint(s.connection, data+"\n")
 }
 
+func (client *Client) CloseConnection() {
+	if client.connection != nil {
+		client.writeline("close")
+		client.connection.Close()
+	}
+}
+
 func (client *Client) reset() {
 	if client.connection != nil {
 		client.connection.Close()
